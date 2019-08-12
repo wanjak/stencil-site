@@ -1,14 +1,7 @@
-import { Component, Prop, Watch, State, h } from '@stencil/core';
-
-interface PostInterface {
-  title: string;
-  date: string;
-  url: string;
-  author: string;
-  description: string;
-  img: string;
-}
-
+import { Component, Prop, h, Build } from '@stencil/core'
+import blogStructure from '../../assets/blog-structure.json'
+import { fileNotFound } from '../../global/site-structure-utils';
+import { MarkdownContent, BlogPostInterface } from '../../global/definitions'
 
 @Component({
   tag: 'blog-component',
@@ -16,18 +9,25 @@ interface PostInterface {
 })
 export class BlogIndex {
 
-  @Prop() pageUrl?: string;
-  @State() postContent?: string
+  @Prop() page?: string;
+  data?: BlogPostInterface;
+  content?: MarkdownContent;
 
-  componentWillLoad() {
-    const post = this.getPost();
-    if (post) {
-      insertOgTags(post);
-      document.title = `Stencil Blog - ${post.title}`;
-      return this.fetchContent();
-    } else {
-      cleanOgTags();
-      document.title = `Stencil Blog`;
+  async componentWillRender() {
+    if (this.page) {
+      console.log('componentWillRender', this.page);
+      const post = this.data = (blogStructure as BlogPostInterface[]).find(blog => blog.url === this.page);
+
+      if (!Build.isBrowser && !post) {
+        fileNotFound();
+        return;
+      }
+
+      if (post && post.filePath) {
+        insertOgTags(post);
+        document.title = `Stencil Blog - ${post.title}`;
+        this.content = await fetchContent(post.filePath);
+      }
     }
   }
 
@@ -35,85 +35,43 @@ export class BlogIndex {
     cleanOgTags();
   }
 
-
-  @Watch('pageUrl')
-  fetchContent() {
-    return fetch(`/assets${this.pageUrl}.html`)
-      .then(response => response.text())
-      .then(data => {
-        this.postContent = data;
-      });
-  }
-
-  private getPost() {
-    if (this.pageUrl) {
-      return POSTS.find(o => o.url === this.pageUrl);
-    }
-    return undefined;
-  }
-
   render() {
-    // if route had a /blog/:post param then render the post, otherwise render the blog index
-    const post = this.getPost();
-    if (post) {
-      const authorSlug = post.author.toLowerCase().replace(' ', '-');
-      document.title = `Stencil Blog - ${post.title}`;
-
-      return (
-        <div class="container">
-
-        <div class="share-links">
-          <div class="sticky">
-            <a href={`http://twitter.com/home?status=${post.title}`} class="twitter" onClick={ function(this: HTMLAnchorElement, ev){
-              ev.preventDefault();
-              window.open(this.href, 'Share via Twitter', 'width=400, height=300');}}>
-              <app-icon name="twitter"></app-icon>
-            </a>
-            <a href={`http://www.facebook.com/share.php?u=${window.location.href}&title=${post.title}`} class="facebook" onClick={ function(this: HTMLAnchorElement, ev){
-              ev.preventDefault();
-              window.open(this.href, 'Share via Facebook', 'width=555, height=656');}}>
-              <app-icon name="facebook"></app-icon>
-            </a>
-            <a href={`http://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}&title=${post.title}`} class="linkedin" onClick={ function(this: HTMLAnchorElement, ev){
-              ev.preventDefault();
-              window.open(this.href, 'Share via LinkedIn', 'width=500, height=600');}}>
-              <app-icon name="linkedin"></app-icon>
-            </a>
-          </div>
-        </div>
-
-          <div class="blog-content">
-            <h1>{post.title}</h1>
-            <span class="post-meta">
-              <img class="post-author-image" src={`/assets/img/blog/authors/${authorSlug}.png`}/> {post.author}&nbsp;&nbsp;|&nbsp;&nbsp;{post.date}
-            </span>
-            <div innerHTML={this.postContent}></div>
-          </div>
-        </div>
-      );
+    if (!this.data || !this.content) {
+      return;
     }
+    const post = this.data;
+    const content = this.content;
+    const authorSlug = post.author.toLowerCase().replace(' ', '-');
 
     return (
       <div class="container">
-        <div class="blog-index">
-        {
-          POSTS.map(post => {
-            const authorSlug = post.author.toLowerCase().replace(' ', '-');
-            return (
-              <div class="blog-item">
-                <h1>{post.title}</h1>
-                <span class="post-meta">
-                  <img class="post-author-image" src={`/assets/img/blog/authors/${authorSlug}.png`}/> {post.author}&nbsp;&nbsp;|&nbsp;&nbsp;{post.date}
-                </span>
-                <p>{post.description}</p>
-                <stencil-route-link url={post.url}>
-                  Read more
-                  <app-icon name="arrow-right"></app-icon>
-                </stencil-route-link>
-              </div>
-            );
-          })
-        }
+
+      <div class="share-links">
+        <div class="sticky">
+          <a href={`http://twitter.com/home?status=${post.title}`} class="twitter" onClick={ function(this: HTMLAnchorElement, ev){
+            ev.preventDefault();
+            window.open(this.href, 'Share via Twitter', 'width=400, height=300');}}>
+            <app-icon name="twitter"></app-icon>
+          </a>
+          <a href={`http://www.facebook.com/share.php?u=${window.location.href}&title=${post.title}`} class="facebook" onClick={ function(this: HTMLAnchorElement, ev){
+            ev.preventDefault();
+            window.open(this.href, 'Share via Facebook', 'width=555, height=656');}}>
+            <app-icon name="facebook"></app-icon>
+          </a>
+          <a href={`http://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}&title=${post.title}`} class="linkedin" onClick={ function(this: HTMLAnchorElement, ev){
+            ev.preventDefault();
+            window.open(this.href, 'Share via LinkedIn', 'width=500, height=600');}}>
+            <app-icon name="linkedin"></app-icon>
+          </a>
+        </div>
+      </div>
+
+        <div class="blog-content">
+          <h1>{post.title}</h1>
+          <span class="post-meta">
+            <img class="post-author-image" src={`/assets/img/blog/authors/${authorSlug}.png`}/> {post.author}&nbsp;&nbsp;|&nbsp;&nbsp;{post.date}
+          </span>
+          {toHypertext(content.hypertext)}
         </div>
       </div>
     );
@@ -121,7 +79,7 @@ export class BlogIndex {
 }
 
 
-function insertOgTags(post: PostInterface) {
+function insertOgTags(post: BlogPostInterface) {
   cleanOgTags();
   const ogTitle = createOgTag('og:title', `Stencil Blog - ${post.title}`);
   const ogDescription = createOgTag('og:description', post.description);
@@ -147,13 +105,49 @@ const createOgTag = (type: string, content: string) => {
   return el;
 };
 
-const POSTS: PostInterface[] = [
-  {
-    title: 'Announcing Stencil 1.0.0',
-    date: 'June 6, 2019',
-    url: '/blog/announcing-stencil-one',
-    author: 'Manu Almeida',
-    description: 'Today, we’re thrilled to announce the release of Stencil 1.0 final (what we’re calling Stencil One), featuring an all-new compiler architecture. It is not only able to better optimize your components, but is designed to be completely future-proof.',
-    img:'/assets/img/blog/og/stencil-one.png'
+
+
+const localCache = new Map<string, Promise<MarkdownContent>>();
+
+const fetchContent = (path: string) => {
+  let promise = localCache.get(path);
+  if (!promise) {
+    console.log('fetchContent', path);
+    promise = fetch(path).then(response => response.json());
+    localCache.set(path, promise);
   }
-];
+  return promise;
+}
+
+const toHypertext = (data: any) => {
+  if (!Array.isArray(data)) {
+    console.error('content error, hypertext is undefined')
+    return null;
+  }
+  const args = [];
+  for (let i = 0; i < data.length; i++) {
+    let arg = data[i];
+    if (i === 0 && typeof arg === 'string' && tagBlacklist.includes(arg.toLowerCase().trim())) {
+      arg = 'template';
+
+    } else if (i === 1 && arg) {
+      const attrs: any = {};
+      Object.keys(arg).forEach(key => {
+        const k = key.toLowerCase();
+        if (!k.startsWith('on') && k !== 'innerhtml') {
+          attrs[key] = arg[key];
+        }
+      });
+      arg = attrs;
+
+    } else if (i > 1) {
+      if (Array.isArray(arg)) {
+        arg = toHypertext(arg);
+      }
+    }
+    args.push(arg);
+  }
+  return (h as any).apply(null, args);
+};
+
+const tagBlacklist = ['script', 'link', 'meta', 'object', 'head', 'html', 'body'];

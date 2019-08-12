@@ -1,0 +1,11 @@
+[
+  {
+    "title": "Announcing Stencil 1.0.0",
+    "date": "June 6, 2019",
+    "url": "/blog/announcing-stencil-one",
+    "author": "Manu Almeida",
+    "description": "Today, we’re thrilled to announce the release of Stencil 1.0 final (what we’re calling Stencil One), featuring an all-new compiler architecture. It is not only able to better optimize your components, but is designed to be completely future-proof.",
+    "img": "/assets/img/blog/og/stencil-one.png",
+    "filePath": "/assets/blog/announcing-stencil-one.json"
+  }
+]
