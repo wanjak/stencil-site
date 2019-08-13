@@ -1,5 +1,5 @@
 import { Component, Prop, h, Build } from '@stencil/core'
-import blogStructure from '../../assets/blog-structure.json'
+import blogStructure from '../../assets/blog/list.json'
 import { fileNotFound } from '../../global/site-structure-utils';
 import { MarkdownContent, BlogPostInterface } from '../../global/definitions'
 

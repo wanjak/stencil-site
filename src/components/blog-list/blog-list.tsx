@@ -1,5 +1,5 @@
 import { Component, h } from '@stencil/core';
-import blogStructure from '../../assets/blog-structure.json';
+import blogStructure from '../../assets/blog/list.json';
 import { BlogPostInterface } from '../../global/definitions'
 
 @Component({
