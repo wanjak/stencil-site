@@ -97,7 +97,7 @@ export class AppRoot {
               <stencil-route url="/blog" component="blog-list" exact={true}/>
 
               <stencil-route url="/blog/:pageName" routeRender={({ match }) => (
-                <blog-component pageUrl={match!.url}></blog-component>
+                <blog-component page={match!.url}></blog-component>
               )}/>
 
               <stencil-route url="/pwa" component="pwas-page" />

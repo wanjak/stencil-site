@@ -25,7 +25,7 @@ export class BlogIndex {
 
       if (post && post.filePath) {
         insertOgTags(post);
-        document.title = `Stencil Blog - ${post.title}`;
+        document.title = post.title;
         this.content = await fetchContent(post.filePath);
       }
     }

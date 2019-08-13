@@ -40,7 +40,12 @@ const BLOG_LIST_FILE = './src/assets/blog/list.json';
       const renderer = new marked.Renderer();
 
       changeCodeCreation(renderer);
-      allBlogPosts
+
+      allBlogPosts.push({
+        ...parsedMarkdown.attributes,
+        filePath: path.join('/assets/blog/', path.basename(jsonFileName, '.md') + '.json')
+      });
+
       htmlContents = marked(parsedMarkdown.body, {
         renderer,
         headerIds: true
@@ -57,11 +62,7 @@ const BLOG_LIST_FILE = './src/assets/blog/list.json';
         hypertext: convertHtmlToHypertextData(htmlContents)
       };
 
-      if (typeof data.title !== 'string') {
-        data.title = 'Stencil';
-      } else {
-        data.title = data.title.trim() + ' - Stencil';
-      }
+      data.title = `Stencil Blog - ${data.title.trim()}`;
 
       await writeFile(destinationFileName, JSON.stringify(data), {
         encoding: 'utf8'
@@ -74,7 +75,12 @@ const BLOG_LIST_FILE = './src/assets/blog/list.json';
   });
 
   await Promise.all(filePromises);
-  await writeFile(BLOG_LIST_FILE, JSON.stringify(allBlogPosts), {
+
+
+  allBlogPosts.sort((a, b) => {
+    return Date.parse(b.date) - Date.parse(a.date);
+  });
+  await writeFile(BLOG_LIST_FILE, JSON.stringify(allBlogPosts, null, 2), {
       encoding: 'utf8'
   });
 
