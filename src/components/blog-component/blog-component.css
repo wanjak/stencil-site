@@ -67,6 +67,22 @@ blog-component .post-author-image {
   height: 24px;
   margin-right: 8px;
   flex: 0 0 24px;
+  border-radius: 12px;
+}
+
+blog-component .post-author-name {
+  padding-right: 15px;
+  color: inherit;
+  text-decoration: none;
+}
+
+blog-component .post-author-name:hover {
+  text-decoration: underline;
+}
+
+blog-component .post-date::before {
+  content: "|";
+  padding-right: 12px;
 }
 
 blog-component .share-links {

@@ -17,11 +17,23 @@ blog-list .post-meta {
   align-items: center;
 }
 
+blog-list .post-title a {
+  text-decoration: none;
+}
+
+blog-list .post-title a:hover h1 {
+  color: var(--color-gunpowder);
+}
+
 blog-list h1 {
   font-size: 32px;
   line-height: 38px;
   font-weight: 600;
   margin: 0 0 12px;
+}
+
+blog-list .blog-item {
+  margin-bottom: 40px;
 }
 
 blog-list .blog-item p {
@@ -31,7 +43,7 @@ blog-list .blog-item p {
   margin: 22px 0;
 }
 
-blog-list .blog-item a {
+blog-list .read-more a {
   color: var(--color-dodger-blue);
   text-decoration: none;
   font-weight: 500;
@@ -67,6 +79,22 @@ blog-list .post-author-image {
   height: 24px;
   margin-right: 8px;
   flex: 0 0 24px;
+  border-radius: 12px;
+}
+
+blog-list .post-author-name {
+  padding-right: 15px;
+  color: inherit;
+  text-decoration: none;
+}
+
+blog-list .post-author-name:hover {
+  text-decoration: underline;
+}
+
+blog-list .post-date::before {
+  content: "|";
+  padding-right: 12px;
 }
 
 blog-list .share-links {

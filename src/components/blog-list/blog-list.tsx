@@ -14,17 +14,21 @@ export class BlogIndex {
         <div class="blog-index">
         {
           (blogStructure as BlogPostInterface[]).map(post => {
-            const authorSlug = post.author.toLowerCase().replace(' ', '-');
             return (
               <div class="blog-item">
-                <h1>{post.title}</h1>
+                <stencil-route-link url={post.url} class="post-title">
+                  <h1>{post.title}</h1>
+                </stencil-route-link>
                 <span class="post-meta">
-                  <img class="post-author-image" src={`/assets/img/blog/authors/${authorSlug}.png`}/> {post.author}&nbsp;&nbsp;|&nbsp;&nbsp;{post.date}
+                  <a href={`http://twitter.com/${post.twitter}`}>
+                    <img alt={`Author: ${post.author}`} class="post-author-image" src={`/assets/img/blog/authors/${post.twitter}.jpg`}/>
+                  </a>
+                  <a class="post-author-name" href={`http://twitter.com/${post.twitter}`}>{post.author}</a>
+                  <span class="post-date">{post.date}</span>
                 </span>
                 <p>{post.description}</p>
-                <stencil-route-link url={post.url}>
+                <stencil-route-link url={post.url} class="read-more">
                   Read more
-                  <app-icon name="arrow-right"></app-icon>
                 </stencil-route-link>
               </div>
             );

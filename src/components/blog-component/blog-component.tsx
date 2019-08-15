@@ -15,7 +15,6 @@ export class BlogIndex {
 
   async componentWillRender() {
     if (this.page) {
-      console.log('componentWillRender', this.page);
       const post = this.data = (blogStructure as BlogPostInterface[]).find(blog => blog.url === this.page);
 
       if (!Build.isBrowser && !post) {
@@ -41,7 +40,6 @@ export class BlogIndex {
     }
     const post = this.data;
     const content = this.content;
-    const authorSlug = post.author.toLowerCase().replace(' ', '-');
 
     return (
       <div class="container">
@@ -69,7 +67,11 @@ export class BlogIndex {
         <div class="blog-content">
           <h1>{post.title}</h1>
           <span class="post-meta">
-            <img class="post-author-image" src={`/assets/img/blog/authors/${authorSlug}.png`}/> {post.author}&nbsp;&nbsp;|&nbsp;&nbsp;{post.date}
+            <a href={`http://twitter.com/${post.twitter}`}>
+              <img alt={`Author: ${post.author}`} class="post-author-image" src={`/assets/img/blog/authors/${post.twitter}.jpg`}/>
+            </a>
+            <a class="post-author-name" href={`http://twitter.com/${post.twitter}`}>{post.author}</a>
+            <span class="post-date">{post.date}</span>
           </span>
           {toHypertext(content.hypertext)}
         </div>

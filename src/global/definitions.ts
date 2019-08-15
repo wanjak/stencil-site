@@ -26,6 +26,7 @@ export interface BlogPostInterface {
   date: string;
   url: string;
   author: string;
+  twitter: string;
   description: string;
   img: string;
   filePath?: string;
